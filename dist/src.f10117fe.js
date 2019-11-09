@@ -140,7 +140,11 @@ function () {
     Object.assign(this.data, update);
   };
 
-  User.prototype.on = function (eventName, callback) {};
+  User.prototype.on = function (eventName, callback) {
+    var handlers = this.events[eventName] || [];
+    handlers.push(callback);
+    this.events[eventName] = handlers;
+  };
 
   return User;
 }();
@@ -159,13 +163,9 @@ var user = new User_1.User({
   name: "joe",
   age: 12
 });
-user.set({
-  name: "jane",
-  age: 32
-});
-user.set({
-  name: "john"
-});
+user.on("change", function () {});
+user.on("change", function () {});
+user.on("sth", function () {});
 console.log(user);
 },{"./models/User":"src/models/User.ts"}],"../../../../.nvm/versions/node/v8.9.3/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];

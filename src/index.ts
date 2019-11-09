@@ -1,17 +1,9 @@
 import { User } from "./models/User";
 
-const user = new User({ name: "joe", age: 12 });
+const user = new User({ id: 1 });
 
-user.on("change", () => {
-  console.log("change 1");
-});
-user.on("change", () => {
-  console.log("change 2");
-});
-user.on("save", () => {
-  console.log("save was triggered");
-});
+user.fetch();
 
-user.trigger("change");
-user.trigger("save");
-user.trigger("fake");
+setTimeout(() => {
+  console.log(user);
+}, 400);

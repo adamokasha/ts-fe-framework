@@ -6,12 +6,20 @@ interface ModelForView {
 // Model is generic and needs a type, so we need to pass in second generic type
 // K could be UserProps for example, where T is User
 export abstract class View<T extends Model<K>, K> {
+  regions: { [key: string]: Element } = {};
+
   constructor(public parent: Element, public model: T) {
     this.bindModel();
   }
 
   abstract template(): string;
 
+  // overridden if needed
+  regionsMap(): { [key: string]: string } {
+    return {};
+  }
+
+  // overridden if needed
   eventsMap(): { [key: string]: () => void } {
     return {};
   }
@@ -42,6 +50,22 @@ export abstract class View<T extends Model<K>, K> {
     }
   }
 
+  mapRegions(fragment: DocumentFragment): void {
+    const regionsMap = this.regionsMap();
+
+    for (let key in regionsMap) {
+      const selector = regionsMap[key];
+      const element = fragment.querySelector(selector);
+
+      if (element) {
+        this.regions[key] = element;
+      }
+    }
+  }
+
+  // override
+  onRender(): void {}
+
   render() {
     // clear parent
     this.parent.innerHTML = "";
@@ -51,6 +75,9 @@ export abstract class View<T extends Model<K>, K> {
 
     // bind events
     this.bindEvents(templateElement.content);
+    this.mapRegions(templateElement.content);
+
+    this.onRender();
 
     this.parent.append(templateElement.content);
   }
